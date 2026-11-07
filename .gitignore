@@ -5,6 +5,13 @@ managed_components/
 .vscode/
 .idea/
 
+# Font pipeline tooling installed locally by npm.
+tools/font_pipeline/node_modules/
+
+# Font pipeline build caches and generated reports (regenerate with gen_font.py).
+tools/font_pipeline/*.ttf
+tools/font_pipeline/last_run_report.json
+
 # Generated repository-local links; canonical skill sources live in skills/.
 /.agents/skills/passport-develop
 /.agents/skills/passport-setup

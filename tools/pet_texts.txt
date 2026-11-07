@@ -1,0 +1,46 @@
+# Pet UI text inventory for font subset generation
+# tools/pet_texts.txt -- single source of truth for all Chinese UI strings.
+# tools/font_pipeline/gen_font.py reads this file, extracts every non-ASCII
+# code point, and generates the LVGL font subset (app_font_16 / app_font_20).
+#
+# Lines starting with '#' are comments. Every other line is a UI string or
+# a space-separated list of characters that must be covered.
+#
+# Fixed UI strings
+
+小鲸
+心情
+饱食
+好感
+喂食
+摸摸
+玩耍
+关于小鲸
+等级
+互动次数
+固件版本
+长按OK返回
+欢迎回来
+电量
+
+# Bubble lines (pet reactions)
+
+嘿嘿~好舒服~
+再摸摸我嘛~
+呀！别突然摸我啦~
+哼！才不是想被摸~
+小鱼干真好吃！
+谢谢投喂~
+吃饱饱啦~
+一起来玩呀~
+看我跳高高！
+好开心呀~
+想吃小鱼干~
+陪我说说话嘛~
+有点小失落…
+今天也要加油鸭~
+小鲸在这里哦~
+摸摸我嘛~
+哇，升级啦！
+呼…晚安~
+呜…被吵醒了~

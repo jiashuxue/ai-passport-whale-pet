@@ -6,6 +6,7 @@ from __future__ import annotations
 import contextlib
 import importlib.util
 import io
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -91,7 +92,10 @@ class VendoredDocumentationTest(unittest.TestCase):
             with self.subTest(name=name):
                 errors = self.document_errors([self.document(name)])
                 self.assertEqual(len(errors), 2)
-                self.assertTrue(all(name in error for error in errors))
+                # Windows Path renders relative paths with backslashes.
+                windows_name = name.replace("/", os.sep)
+                self.assertTrue(all(name in error or windows_name in error
+                                    for error in errors))
 
     def test_valid_first_party_pair_and_links_still_pass(self) -> None:
         files = [

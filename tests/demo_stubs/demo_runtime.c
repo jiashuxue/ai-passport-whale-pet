@@ -36,6 +36,7 @@ void ui_pixel_set_selected(lv_obj_t *panel, bool selected, bool enabled) {
     (void)panel; (void)selected; (void)enabled;
 }
 esp_err_t esp_sleep_disable_wakeup_source(int source) { (void)source; return ESP_OK; }
+int esp_sleep_get_wakeup_cause(void) { return 0; }
 esp_err_t esp_sleep_enable_timer_wakeup(uint64_t us) { (void)us; return ESP_OK; }
 esp_err_t esp_light_sleep_start(void) { return ESP_OK; }
 void esp_deep_sleep_start(void) { assert(!"unexpected deep sleep in host test"); }
@@ -163,6 +164,8 @@ void vSemaphoreDelete(SemaphoreHandle_t sem) {
 
 esp_err_t demo_radio_nvs_prepare(void) { return ESP_OK; }
 esp_err_t demo_radio_network_prepare(void) { return ESP_OK; }
+esp_err_t esp_wifi_scan_get_ap_num(uint16_t *count) { if (count) *count = 0; return ESP_OK; }
+esp_err_t esp_wifi_scan_get_ap_records(uint16_t *count, wifi_ap_record_t *records) { (void)records; if (count) *count = 0; return ESP_OK; }
 esp_err_t nimble_port_init(void) { return ESP_OK; }
 esp_err_t nimble_port_deinit(void) {
     test_nimble_deinits++;
@@ -184,3 +187,44 @@ int ble_gap_adv_start(uint8_t address_type, const void *address, int duration,
     return 0;
 }
 int ble_gap_adv_stop(void) { return 0; }
+
+// ---- UI stubs -------------------------------------------------------------
+// Demo pages build LVGL screens inside enter(); host tests exercise only the
+// runtime logic, so every UI call is a no-op against one shared object.
+// Some linkers resolve undefined symbols before garbage collection and report
+// these even though the calling sections are dropped on CI toolchains.
+static lv_obj_t s_ui_obj;
+
+uint32_t lv_color_hex(uint32_t color) { return color; }
+lv_obj_t *lv_obj_create(lv_obj_t *parent) { (void)parent; return &s_ui_obj; }
+lv_obj_t *lv_label_create(lv_obj_t *parent) { (void)parent; return &s_ui_obj; }
+void lv_obj_set_size(lv_obj_t *object, int width, int height) { (void)object; (void)width; (void)height; }
+void lv_obj_set_width(lv_obj_t *object, int width) { (void)object; (void)width; }
+void lv_obj_set_style_radius(lv_obj_t *object, int radius, int selector) { (void)object; (void)radius; (void)selector; }
+void lv_obj_set_style_bg_color(lv_obj_t *object, uint32_t color, int selector) { (void)object; (void)color; (void)selector; }
+void lv_obj_set_style_border_width(lv_obj_t *object, int width, int selector) { (void)object; (void)width; (void)selector; }
+void lv_obj_set_style_text_color(lv_obj_t *object, uint32_t color, int selector) { (void)object; (void)color; (void)selector; }
+void lv_obj_set_style_text_align(lv_obj_t *object, int align, int selector) { (void)object; (void)align; (void)selector; }
+void lv_obj_set_style_text_font(lv_obj_t *object, const lv_font_t *font, int selector) { (void)object; (void)font; (void)selector; }
+void lv_obj_center(lv_obj_t *object) { (void)object; }
+void lv_obj_align(lv_obj_t *object, int align, int x, int y) { (void)object; (void)align; (void)x; (void)y; }
+void lv_obj_delete(lv_obj_t *object) { (void)object; }
+void lv_label_set_text_fmt(lv_obj_t *object, const char *format, ...) { (void)object; (void)format; }
+void lv_label_set_long_mode(lv_obj_t *object, int mode) { (void)object; (void)mode; }
+void lv_screen_load(lv_obj_t *screen) { (void)screen; }
+lv_timer_t *lv_timer_create(void (*callback)(lv_timer_t *), unsigned period, void *data) { (void)callback; (void)period; (void)data; return NULL; }
+void lv_timer_delete(lv_timer_t *timer) { (void)timer; }
+
+lv_obj_t *ui_pixel_screen_create(const char *title) { (void)title; return &s_ui_obj; }
+lv_obj_t *ui_pixel_panel_create(lv_obj_t *parent, int x, int y, int w, int h, uint32_t color) {
+    (void)parent; (void)x; (void)y; (void)w; (void)h; (void)color;
+    return &s_ui_obj;
+}
+lv_obj_t *ui_pixel_label(lv_obj_t *parent, const char *text, const lv_font_t *font, uint32_t color) {
+    (void)parent; (void)text; (void)font; (void)color;
+    return &s_ui_obj;
+}
+lv_obj_t *ui_pixel_mascot_create(lv_obj_t *parent, int x, int y) {
+    (void)parent; (void)x; (void)y;
+    return &s_ui_obj;
+}
